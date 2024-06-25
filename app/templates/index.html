@@ -32,16 +32,15 @@
         <img id="home-logo" class="img-fluid"
           src="{{ url_for('static', filename='img/pencil.svg') }}" alt="">
         <h1 id="home-title">SAT Insights</h1>
-        <h1 id="home-tagline">Your scores, simplified</h1>
+        <h1 id="home-tagline">Your Scores, Simplified</h1>
       </div>
     </div>
     <div class="row justify-content-center">
       <div class="col col-sm-11">
-
         <div class="home-next">
           <a href="#home-2">
             <h4>
-              Report your score
+              Learn More
             </h4>
             <svg width="3em" height="3em" viewBox="0 0 16 16" class="bi
                 bi-chevron-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -58,16 +57,24 @@
   <div id="home-2" class="home-section">
     <div class="row justify-content-center">
       <div class="col-11 col-sm-10 col-lg-8">
-        <h1 class="mb-4">Section 2 title</h1>
-        <div class="text-center">
-          <a class="cta btn mb-2" href="#contact">
-            Get in touch
-          </a>
+        <h1 class="mb-4">What is SAT Insight?</h1>
+        <div class="container mt-5">
+            <p>
+              SAT Insight provides immediate analysis of your SAT results. Simply upload your most recent score as an HTML file, and a full report will be emailed to you within minutes.
+            </p>
+            <p>
+              For more access to tutoring or score analysis, explore 
+              <a href="https://www.openpathtutoring.com/index#home" target="_blank">Open Path Tutoring</a> 
+              to see how your score can be improved.
+            </p>
         </div>
+        <div class="container mt-5 text-center">
+            <a class="image-text-button" href="https://satsuite.collegeboard.org/media/pdf/sample-sat-score-report.pdf" target="_blank"> Score Report<br>Example</a>
+        </div>          
         <div class="home-next">
           <a href="#home-3">
             <h4>
-              Section 3
+              Report Your Score
             </h4>
             <svg width="3em" height="3em" viewBox="0 0 16 16" class="bi bi-chevron-down"
                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -82,7 +89,12 @@
   <div id="home-3" class="home-section inverse">
     <div class="row justify-content-center">
       <div class="col-11 col-sm-10 col-lg-8">
-        <h1 class="mb-4">Section 3 title</h1>
+        <h1 class="mb-4">Report Your Score</h1>
+        <div class="text-center">
+            <a class="button-89" href="{{ url_for('upload') }}">
+              Upload<br>SAT
+            </a>
+        </div>
         <div class="home-next">
           <a href="#contact">
             <h4>

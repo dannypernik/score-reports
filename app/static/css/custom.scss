@@ -1,11 +1,11 @@
 $font-size-root: 10px;
-$body-font-size: 1.8rem;
+$body-font-size: 2.2rem;
 $lead-font-size: calc(2rem + 0.1vw);
 $lead-font-weight: inherit;
-$body-font: 'Montserrat', 'Helvetica', sans-serif;
+$body-font: 'Inconsolata', monospace;
 $spacer: 2rem;
-$primary-color: #1C4D65;
-$secondary-color: #4ad1cc;//58bba4;
+$primary-color: #92b4ce;
+$secondary-color: #45679e;//58bba4;
 $highlight-color: #d35137;//e97435;
 $message-color: #004085;
 $alert-color: #850017;
@@ -89,7 +89,7 @@ h6, .h6 {
 a {
   display: inline-block;
   text-decoration: none;
-  color: darken($secondary-color, 15%);
+  color: darken($secondary-color, 10%);
   transition: all 0.2s ease-in-out;
 
   &:hover {
@@ -447,11 +447,11 @@ div.message {
 // Home page
 
 #home-1 {
-  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../img/simon-berger-twukN12EN7c-unsplash.jpg) center bottom no-repeat;
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../img/art-institute-of-chicago-fxyXdQW8FWA-unsplash.jpg) center bottom no-repeat;
 }
 
 #home-3 {
-  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../img/te-lun-ou-yang-TFZlTFOWReA-unsplash.jpg) center bottom no-repeat;
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../img/art-institute-of-chicago-qlMJ_BNwJ28-unsplash.jpg) center bottom no-repeat;
 }
 
 #home-1, #home-3 {
@@ -544,3 +544,57 @@ div.message {
 .semibold {
   font-weight: 600;
 }
+
+//experimenting with Buttons!
+.button-89 {
+    --b: 3px;   /* border thickness */
+    --s: .45em; /* size of the corner */
+    --color: #white; /* button color */
+    
+    padding: calc(.1em + var(--s)) calc(.9em + var(--s));
+    color: var(--color);
+    --_p: var(--s);
+    background:
+      conic-gradient(from 90deg at var(--b) var(--b),#0000 90deg,var(--color) 0)
+      var(--_p) var(--_p)/calc(100% - var(--b) - 2*var(--_p)) calc(100% - var(--b) - 2*var(--_p));
+    transition: .3s linear, color 0s, background-color 0s;
+    outline: var(--b) solid #0000;
+    outline-offset: .6em;
+    font-size: 75px;
+  
+    border: 0;
+  
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  
+  .button-89:hover,
+  .button-89:focus-visible {
+    --_p: 0px;
+    outline-color: var(--color);
+    outline-offset: .05em;
+  }
+  
+  .button-89:active {
+    background: var(--color);
+    color: #fff;
+  }  
+
+  .image-text-button {
+    font-size: 7rem; /* Initial font size */
+    font-weight: bold;
+    color: transparent;
+    background: url(../img/art-institute-of-chicago-fxyXdQW8FWA-unsplash.jpg) no-repeat;
+    background-size: 100%;
+    background-position: center;
+    -webkit-background-clip: text;
+    background-clip: text;
+    transition: transform 0.3s;
+    text-decoration: none; /* Remove underline */
+    display: inline-block;
+  }
+
+  .image-text-button:active {
+    transform: scale(1.1); /* Grow 10% bigger when clicked */
+  }
