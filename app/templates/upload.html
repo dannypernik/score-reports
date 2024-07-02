@@ -7,6 +7,21 @@
   <div class="row justify-content-center">
     <form method="POST" action="{{ url_for('upload_file') }}" enctype="multipart/form-data">
         <p><input type="file" name="file" accept=".pdf"></p>
+        <p>First Name: <input type="text" name="first_name" required></p>
+        <p>Last Name: <input type="text" name="last_name" required></p>
+        <p>Email: <input type="email" name="email" required></p>
+        <p>Math Score: <input type="number" name="math_score" required></p>
+        <p>Reading and Writing Score: <input type="number" name="reading_writing_score" required></p>
+        <p>Test Version:
+          <select name="test_version" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </p>
         <p><input type="submit" value="Submit"></p>
     </form>
     {% with messages = get_flashed_messages() %}

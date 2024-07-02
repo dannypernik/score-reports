@@ -1,8 +1,8 @@
-"""users table
+"""“init_tables”
 
-Revision ID: 70ea25d10abe
+Revision ID: 2143dcd2f0d6
 Revises: 
-Create Date: 2022-10-19 22:42:06.154867
+Create Date: 2024-07-02 15:53:07.248125
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '70ea25d10abe'
+revision = '2143dcd2f0d6'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,18 +22,11 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('first_name', sa.String(length=32), nullable=True),
     sa.Column('last_name', sa.String(length=32), nullable=True),
+    sa.Column('math_score', sa.String(length=32), nullable=True),
+    sa.Column('reading_score', sa.String(length=32), nullable=True),
+    sa.Column('test_version', sa.String(length=32), nullable=True),
     sa.Column('email', sa.String(length=64), nullable=True),
-    sa.Column('phone', sa.String(length=32), nullable=True),
     sa.Column('password_hash', sa.String(length=128), nullable=True),
-    sa.Column('location', sa.String(length=128), nullable=True),
-    sa.Column('status', sa.String(length=24), nullable=True),
-    sa.Column('role', sa.String(length=24), nullable=True),
-    sa.Column('parent_id', sa.Integer(), nullable=True),
-    sa.Column('timestamp', sa.DateTime(), nullable=True),
-    sa.Column('last_viewed', sa.DateTime(), nullable=True),
-    sa.Column('is_admin', sa.Boolean(), nullable=True),
-    sa.Column('is_verified', sa.Boolean(), nullable=True),
-    sa.ForeignKeyConstraint(['parent_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('user', schema=None) as batch_op:
