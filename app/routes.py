@@ -7,9 +7,23 @@ from app.forms import ContactForm, EmailListForm, SignupForm, LoginForm, UserFor
 from flask_login import current_user, login_user, logout_user, login_required, login_url
 from app.models import User
 from werkzeug.urls import url_parse
+from werkzeug.utils import secure_filename #margaux added
 from datetime import datetime
 from app.email import send_contact_email, send_verification_email, send_password_reset_email
 from functools import wraps
+
+##
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'pdf'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+##
 
 @app.before_request
 def before_request():
@@ -38,6 +52,129 @@ def admin_required(f):
             return redirect(login_url('signin', next_url=request.url))
     return wrap
 
+# max edits
+"""
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('download_file', name=filename))
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+    '''
+"""
+"""
+# File upload routes
+@app.route('/upload_index', methods=['GET'])
+def upload_index():
+    files = os.listdir(app.config['UPLOAD_FOLDER'])
+    return render_template('upload_index.html', files=files)
+
+@app.route('/upload_file', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('upload_index'))
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+    '''
+
+@app.route('/uploads/<filename>', methods=['GET'])
+def uploads(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+"""
+##max works starts
+UPLOAD_FOLDER = 'app/uploads'
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024  # 1 MB
+app.config['UPLOAD_EXTENSIONS'] = ['.pdf']
+app.config['UPLOAD_PATH'] = UPLOAD_FOLDER
+app.secret_key = 'supersecretkey'  # Required for flashing messages
+
+@app.route('/upload_file', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        uploaded_file = request.files['file']
+        filename = secure_filename(uploaded_file.filename)
+        if filename != '':
+            file_ext = os.path.splitext(filename)[1]
+            if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+                abort(400)
+            uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+            flash(f'Success! {filename} has been uploaded.')
+            return redirect(url_for('upload_file'))
+    return render_template('upload.html')
+
+@app.route('/uploads/<filename>', methods=['GET'])
+def uploads(filename):
+    return send_from_directory(app.config['UPLOAD_PATH'], filename)
+"""
+UPLOAD_FOLDER = 'uploads'
+
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
+app.config['UPLOAD_EXTENSIONS'] = ['.pdf']
+app.config['UPLOAD_PATH'] = UPLOAD_FOLDER
+
+# File upload routes (margaux edits)
+@app.route('/upload_index', methods=['GET', 'POST'])
+def upload_index():
+    files = os.listdir(app.config['UPLOAD_PATH'])
+    return render_template('upload_index.html', files=files)
+
+@app.route('/upload_file', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        uploaded_file = request.files['file']
+        filename = secure_filename(uploaded_file.filename)
+        if filename != '':
+            file_ext = os.path.splitext(filename)[1]
+            if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+                abort(400)
+            uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+        return redirect(url_for('upload_index'))
+    return render_template('upload.html')
+
+@app.route('/uploads/<filename>', methods=['GET'])
+def uploads(filename):
+    return send_from_directory(app.config['UPLOAD_PATH'], filename)
+"""
+### Edit end
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
