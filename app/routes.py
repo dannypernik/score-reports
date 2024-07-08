@@ -9,8 +9,9 @@ from app.models import User
 from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename #margaux added
 from datetime import datetime
-from app.email import send_contact_email, send_verification_email, send_password_reset_email
+from app.email_ import send_contact_email, send_verification_email, send_password_reset_email
 from functools import wraps
+from app.pdf_processor import process_pdf
 
 ##
 UPLOAD_FOLDER = 'uploads'
@@ -70,13 +71,28 @@ def upload_file():
             math_score = int(request.form['math_score'])
             reading_writing_score = int(request.form['reading_writing_score'])
             test_version = request.form['test_version']
-            filename = secure_filename(uploaded_file.filename)
+            filename = secure_filename(uploaded_file.filename) #ensures filenames are safe
+            # Validate scores
+            if not (0 <= math_score <= 800):
+                flash('Math score must be between 0 and 800.')
+                return redirect(url_for('upload_file'))
+            if not (0 <= reading_writing_score <= 800):
+                flash('Reading and Writing score must be between 0 and 800.')
+                return redirect(url_for('upload_file'))
 
             if filename != '':
                 file_ext = os.path.splitext(filename)[1]
                 if file_ext not in app.config['UPLOAD_EXTENSIONS']:
                     abort(400)
                 uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+
+                #process the pdf    
+                #file_path = os.path.join(app.config['UPLOAD_PATH'], filename)
+                #uploaded_file.save(file_path)  # Save the file first
+                
+                # Process the PDF and print email and filename
+                process_pdf(uploaded_file, email, first_name, last_name, test_version)
+
                 total_score= math_score + reading_writing_score
                 new_user = User(
                     first_name=first_name,
