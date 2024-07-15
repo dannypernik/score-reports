@@ -11,6 +11,7 @@ from datetime import datetime
 from app.email import send_contact_email, send_verification_email, send_password_reset_email
 from functools import wraps
 
+
 @app.before_request
 def before_request():
     if current_user.is_authenticated:

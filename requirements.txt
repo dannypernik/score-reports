@@ -29,7 +29,7 @@ google-auth
 google-auth-httplib2==0.1.0
 google-auth-oauthlib==1.0.0
 googleapis-common-protos==1.60.0
-greenlet==2.0.2
+greenlet==3.0.3
 httplib2==0.22.0
 idna==3.4
 importlib-metadata==6.8.0
