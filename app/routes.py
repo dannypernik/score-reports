@@ -12,6 +12,7 @@ from datetime import datetime
 from app.email_ import send_contact_email, send_verification_email, send_password_reset_email
 from functools import wraps
 from app.pdf_processor import process_pdf
+from app.test_pdf_checker import check_pdf_content
 
 ##
 UPLOAD_FOLDER = 'uploads'
@@ -55,10 +56,14 @@ def admin_required(f):
 
 ##max works starts
 UPLOAD_FOLDER = 'app/uploads'
+app.config['UPLOAD_FOLDER'] = 'app/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024  # 1 MB
 app.config['UPLOAD_EXTENSIONS'] = ['.pdf']
-app.config['UPLOAD_PATH'] = UPLOAD_FOLDER
-app.secret_key = 'supersecretkey'  # Required for flashing messages
+app.config['UPLOAD_PATH'] = app.config['UPLOAD_FOLDER']
+app.secret_key = 'supersecretkey'  
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'pdf'}
 
 @app.route('/upload_file', methods=['GET', 'POST'])
 def upload_file():
@@ -83,29 +88,37 @@ def upload_file():
             if filename != '':
                 file_ext = os.path.splitext(filename)[1]
                 if file_ext not in app.config['UPLOAD_EXTENSIONS']:
-                    abort(400)
-                uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+                    flash('Invalid file type.')
+                    return redirect(url_for('upload_file'))
 
-                #process the pdf    
-                #file_path = os.path.join(app.config['UPLOAD_PATH'], filename)
-                #uploaded_file.save(file_path)  # Save the file first
-                
-                # Process the PDF and print email and filename
-                process_pdf(uploaded_file, email, first_name, last_name, test_version)
+                file_path = os.path.join(app.config['UPLOAD_PATH'], filename)
+                uploaded_file.save(file_path)
 
-                total_score= math_score + reading_writing_score
-                new_user = User(
-                    first_name=first_name,
-                    last_name=last_name,
-                    email=email,
-                    math_score=math_score,
-                    reading_score=reading_writing_score,
-                    test_version=test_version,
-                    overall_score=total_score
-                )
-                db.session.add(new_user)
-                db.session.commit()
-                flash(f'Success! {filename} has been uploaded and user details saved.')
+                # Check for text to ensure it is the right kind of script
+                if check_pdf_content(file_path):
+                    flash('File is a valid College Board PDF.')
+                    total_score = math_score + reading_writing_score
+
+                    # Process the PDF and print email and filename
+                    process_pdf(file_path, email, first_name, last_name, math_score, reading_writing_score, total_score, test_version)
+                    flash('File has been processed.')
+
+                    new_user = User(
+                        first_name=first_name,
+                        last_name=last_name,
+                        email=email,
+                        math_score=math_score,
+                        reading_score=reading_writing_score,
+                        test_version=test_version,
+                        overall_score=total_score
+                    )
+                    db.session.add(new_user)
+                    db.session.commit()
+                    flash(f'Success! {filename} has been uploaded and user details saved.')
+                else:
+                    flash('File is not a valid College Board PDF. Please choose a different file.')
+                    os.remove(file_path)  # Remove the invalid file
+
             else:
                 flash('No file selected or invalid file type.')
         except Exception as e:
@@ -117,7 +130,6 @@ def upload_file():
 @app.route('/uploads/<filename>', methods=['GET'])
 def uploads(filename):
     return send_from_directory(app.config['UPLOAD_PATH'], filename)
-
 ### Edit end
 
 @app.route('/', methods=['GET', 'POST'])

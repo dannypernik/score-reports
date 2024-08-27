@@ -5,3 +5,6 @@ __pycache__
 /venv/
 /logs/
 app.db
+app/token.json
+app/credentials.json
+/.vscode/
